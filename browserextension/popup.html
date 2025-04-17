@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Twitter Bot Detector</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 340px;
+      padding: 15px;
+      color: #14171A;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    h2 {
+      margin-top: 0;
+      color: #1DA1F2;
+      font-size: 18px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    label {
+      font-weight: 500;
+      font-size: 14px;
+    }
+    
+    input[type="text"], 
+    input[type="number"] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      width: 100%;
+    }
+    
+    button {
+      padding: 10px;
+      background-color: #1DA1F2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background-color: #0c8bd0;
+    }
+    
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    #analyzeButton {
+      background-color: #28a745;
+    }
+    
+    #analyzeButton:hover {
+      background-color: #218838;
+    }
+    
+    #status {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      background-color: #f8f9fa;
+    }
+    
+    .status-error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    
+    .status-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    .status-info {
+      background-color: #e2f3fd;
+      color: #0c5460;
+    }
+    
+    .status-warning {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    
+    .settings {
+      background-color: #f8f9fa;
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 16px;
+    }
+    
+    .settings h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .api-settings {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+    
+    .results-container {
+      margin-top: 16px;
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      padding: 12px;
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .results-summary {
+      margin-bottom: 12px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    .tweet-result {
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      font-size: 14px;
+      border-left: 3px solid #ccc;
+    }
+    
+    .bot-tweet {
+      background-color: rgba(255, 200, 200, 0.3);
+      border-left-color: #dc3545;
+    }
+    
+    .human-tweet {
+      background-color: rgba(200, 255, 200, 0.3);
+      border-left-color: #28a745;
+    }
+    
+    .tweet-text {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #555;
+      word-break: break-word;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 15px;
+    }
+    
+    .tab {
+      padding: 8px 15px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-weight: 500;
+    }
+    
+    .tab.active {
+      border-bottom-color: #1DA1F2;
+      color: #1DA1F2;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .progress-container {
+      width: 100%;
+      background-color: #f1f1f1;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background-color: #1DA1F2;
+      width: 0%;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+    
+    .stats-container {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    
+    .stats-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .download-section {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f0f8ff;
+      border: 1px solid #cce5ff;
+      border-radius: 4px;
+    }
+    
+    .download-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #0056b3;
+    }
+    
+    .download-link {
+      display: block;
+      margin: 5px 0;
+      color: #0056b3;
+      text-decoration: none;
+    }
+    
+    .download-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Twitter Bot Detector</h2>
+    
+    <div class="tabs">
+      <div class="tab active" data-tab="scrape">Scrape</div>
+      <div class="tab" data-tab="results">Results</div>
+      <div class="tab" data-tab="settings">Settings</div>
+      <div class="tab" data-tab="stats">Stats</div>
+    </div>
+    
+    <div id="scrape-tab" class="tab-content active">
+      <div class="form-group">
+        <label for="username">Twitter username:</label>
+        <div class="username-container">
+          <input type="text" id="username" placeholder="Enter username (without @)" style="width: 100%;">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="tweetCount">Number of tweets to collect:</label>
+        <input type="number" id="tweetCount" min="10" max="200" value="50">
+      </div>
+      
+      <button id="scrapeButton">Scrape Tweets</button>
+      <button id="analyzeButton" disabled>Analyze for Bots</button>
+      <button id="downloadButton" disabled>Download Data</button>
+      
+      <div id="status">Ready to scrape tweets.</div>
+      <div class="progress-container" id="progressContainer" style="display: none;">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+    </div>
+    
+    <div id="results-tab" class="tab-content">
+      <div class="results-container" id="resultsContainer">
+        <div class="results-summary" id="resultsSummary">
+          No analysis results yet. Scrape and analyze tweets first.
+        </div>
+        <div id="resultsList"></div>
+      </div>
+    </div>
+    
+    <div id="settings-tab" class="tab-content">
+      <div class="settings">
+        <h3>Scraping Options</h3>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="includeReplies"> Include replies
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="includeRetweets"> Include retweets
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="autoAnalyze"> Auto-analyze after scraping
+          </label>
+        </div>
+      </div>
+      
+      <div class="api-settings">
+        <h3>API Settings</h3>
+        <div class="form-group">
+          <label for="apiUrl">Bot detection API URL:</label>
+          <input type="text" id="apiUrl" value="http://127.0.0.1:5000/api/analyze">
+        </div>
+        <p style="font-size: 12px; color: #666; margin-top: 6px;">
+          Default is localhost. Make sure the server is running before analysis.
+        </p>
+      </div>
+    </div>
+    
+    <div id="stats-tab" class="tab-content">
+      <div class="stats-container">
+        <div class="stats-title">Extension Usage Statistics</div>
+        <div id="total-stats">
+          <p>Total tweets scraped: <span id="total-tweets-count">0</span></p>
+          <p>Total accounts analyzed: <span id="total-accounts-count">0</span></p>
+          <p>Last account analyzed: <span id="last-account">None</span></p>
+        </div>
+      </div>
+      
+      <div class="download-section">
+        <div class="download-title">Download Server Component & Model</div>
+        <p>For the bot detection to work, you need to run the server component on your local machine.</p>
+        <a href="https://github.com/your-username/twitter-bot-detector-server" class="download-link" target="_blank">GitHub Repository</a>
+        <a href="#" class="download-link" id="downloadServerLink">Download Server Script</a>
+        <a href="#" class="download-link" id="downloadModelLink">Download LLM Model</a>
+        
+        <div style="margin-top: 15px;">
+          <div style="font-weight: bold; margin-bottom: 5px;">Quick Setup Instructions:</div>
+          <ol style="padding-left: 20px; margin-top: 5px;">
+            <li>Download the server script and model</li>
+            <li>Install Python 3.8+ if not installed</li>
+            <li>Install requirements: <code>pip install -r requirements.txt</code></li>
+            <li>Run the server: <code>python server.py</code></li>
+            <li>The server will start at http://127.0.0.1:5000</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
